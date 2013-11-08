@@ -4,14 +4,17 @@
  * and open the template in the editor.
  */
 
-package packvorschrift;
+package view;
 
 import javafx.animation.Animation;
 import javafx.animation.Transition;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -20,6 +23,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -31,6 +35,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import model.Packet;
 
 /**
  *
@@ -123,7 +128,7 @@ public class Packvorschrift extends Application {
         
     }
     
-    final private TableView table = new TableView();
+    final private TableView <Packet>table = new TableView();
     
     public Pane addTablePane() {
         
@@ -133,14 +138,37 @@ public class Packvorschrift extends Application {
         
         table.setEditable(false);
         
-        TableColumn name = new TableColumn("Name");
-        TableColumn id = new TableColumn("ID");
-        TableColumn hight = new TableColumn("Höhe");
-        TableColumn width = new TableColumn("Breite");
-        TableColumn cool = new TableColumn("Cool");
-        TableColumn hot = new TableColumn("Hot");
+        TableColumn tname = new TableColumn("Name");
+        TableColumn tid = new TableColumn("ID");
+        TableColumn theight = new TableColumn("Höhe");
+        TableColumn twidth = new TableColumn("Breite");
+        TableColumn tcool = new TableColumn("Cool");
+        TableColumn thot = new TableColumn("Hot");
         
-        table.getColumns().addAll(name, id, hight, width, cool, hot);
+        
+        tname.setCellValueFactory(
+            new PropertyValueFactory<Packet,String>("name")
+        );
+        tid.setCellValueFactory(
+            new PropertyValueFactory<Packet,Integer>("id")
+        );
+        twidth.setCellValueFactory(
+            new PropertyValueFactory<Packet,Double>("width")
+        );
+        theight.setCellValueFactory(
+            new PropertyValueFactory<Packet,Double>("height")
+        );
+        tcool.setCellValueFactory(
+            new PropertyValueFactory<Packet,String>("coolness")
+        );
+        thot.setCellValueFactory(
+            new PropertyValueFactory<Packet,Boolean>("hotiness")
+        );
+        
+        table.setItems(data);
+        table.getColumns().addAll(tname, tid, theight, twidth, tcool, thot);
+        
+        
         
         gp.getChildren().add(table);
         
@@ -154,13 +182,19 @@ public class Packvorschrift extends Application {
         
         double save;
         final VBox vb = new VBox();
+        final HBox hb = new HBox();
         vb.setPrefWidth(width);
         
+        final Label warning = new Label("");
+        warning.setPrefSize(width-100, 25);
+        warning.setAlignment(Pos.CENTER);
         final Button controlButton = new Button();
         controlButton.setText("choose");
+        controlButton.setPrefSize(100, 25);
+        controlButton.setMinWidth(100);
         
         controlButton.setOnAction(new EventHandler<ActionEvent>() {
-
+            
             @Override
             public void handle(ActionEvent t) {
                 final Animation hidePane = new Transition() {
@@ -192,15 +226,27 @@ public class Packvorschrift extends Application {
                     }
                 });
                 if(controlButton.getText().equals("choose")) {
-                    hidePane.play();
+                    if(table.getSelectionModel().getSelectedItem() != null) {
+                        warning.setText("");
+                        hidePane.play();
+                        name.setText(table.getSelectionModel().getSelectedItem().getName());
+                        id.setText(Integer.toString(table.getSelectionModel().getSelectedItem().getId()));
+                        widthh.setText(Double.toString(table.getSelectionModel().getSelectedItem().getWidth()));
+                        height.setText(Double.toString(table.getSelectionModel().getSelectedItem().getHeight()));
+                        cool.setText(table.getSelectionModel().getSelectedItem().getCoolness());
+                        hot.setText(Boolean.toString(table.getSelectionModel().getSelectedItem().getHotiness()));
+                    } else {
+                        warning.setText("bitte erst Eintrag auswählen");
+                    }
                 } else {
                     showPane.play();
+                    table.getSelectionModel().clearSelection();
                 }
             };
         });
-        
+        hb.getChildren().addAll(controlButton, warning);
         vb.getChildren().addAll(nodes);
-        vb.getChildren().add(controlButton);
+        vb.getChildren().add(hb);
         p.getChildren().add(vb);
         
         return p;
@@ -221,40 +267,49 @@ public class Packvorschrift extends Application {
         Label l = new Label("Hier steht mal was!");
         Label l2 = new Label("und hier noch was!");
         
-        Label namel = new Label("\nName: ");
-        TextField name = new TextField();
-        Label idl = new Label("\nID: ");
-        TextField id = new TextField();
-        Label widthl = new Label("\nWidth: ");
-        TextField width = new TextField();
-        Label heightl = new Label("\nHeight: ");
-        TextField height = new TextField();
-        Label cooll = new Label("\nCool: ");
-        TextField cool = new TextField();
-        Label hotl = new Label("\nHot: ");
-        TextField hot = new TextField();
         
-        Label namel2 = new Label("\nName: ");
-        TextField name2 = new TextField();
-        Label idl2 = new Label("\nID: ");
-        TextField id2 = new TextField();
-        Label widthl2 = new Label("\nWidth: ");
-        TextField width2 = new TextField();
-        Label heightl2 = new Label("\nHeight: ");
-        TextField height2 = new TextField();
-        Label cooll2 = new Label("\nCool: ");
-        TextField cool2 = new TextField();
-        Label hotl2 = new Label("\nHot: ");
-        TextField hot2 = new TextField();
         
-        vb.getChildren().addAll(l, namel, name, idl, id, widthl, width, heightl, 
+        vb.getChildren().addAll(l, namel, name, idl, id, widthl, widthh, heightl, 
                 height, cooll, cool, hotl, hot);
-        vb2.getChildren().addAll(l2, namel2, name2, idl2, id2, widthl2, width2, heightl2, 
-                height2, cooll2, cool2, hotl2, hot2);
+        vb2.getChildren().addAll(l2, namel2, name2, idl2, id2, widthl2, width2, 
+                heightl2, height2, cooll2, cool2, hotl2, hot2);
         hb.getChildren().addAll(vb, vb2);
         p.getChildren().add(hb);
         
         return p;
     }
+    
+    final ObservableList<Packet> data = FXCollections.observableArrayList(
+        new Packet("Buch", 1, 20, 30, "not so", false),
+        new Packet("CD", 2, 10, 10, "very cool", true),
+        new Packet("Esel", 3, 3000, 1500, "oh no!", false)
+    );
+    
+    
+    private final Label namel = new Label("\nName: ");
+    private final TextField name = new TextField();
+    private final Label idl = new Label("\nID: ");
+    private final TextField id = new TextField();
+    private final Label widthl = new Label("\nWidth: ");
+    private final TextField widthh = new TextField();
+    private final Label heightl = new Label("\nHeight: ");
+    private final TextField height = new TextField();
+    private final Label cooll = new Label("\nCool: ");
+    private final TextField cool = new TextField();
+    private final Label hotl = new Label("\nHot: ");
+    private final TextField hot = new TextField();
+
+    private final Label namel2 = new Label("\nName: ");
+    private final TextField name2 = new TextField();
+    private final Label idl2 = new Label("\nID: ");
+    private final TextField id2 = new TextField();
+    private final Label widthl2 = new Label("\nWidth: ");
+    private final TextField width2 = new TextField();
+    private final Label heightl2 = new Label("\nHeight: ");
+    private final TextField height2 = new TextField();
+    private final Label cooll2 = new Label("\nCool: ");
+    private final TextField cool2 = new TextField();
+    private final Label hotl2 = new Label("\nHot: ");
+    private final TextField hot2 = new TextField();
     
 }
