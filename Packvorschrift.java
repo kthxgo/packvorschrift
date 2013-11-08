@@ -219,7 +219,7 @@ public class JavaFXApplication1 extends Application {
         vb2.setPadding(new Insets(10, 10, 10, 10));
         
         Label l = new Label("Hier steht mal was!");
-        Label l2 = new Label("und hier noch was");
+        Label l2 = new Label("und hier noch was!");
         
         Label namel = new Label("\nName: ");
         TextField name = new TextField();
