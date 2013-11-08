@@ -4,8 +4,6 @@
  * and open the template in the editor.
  */
 
-package javafxapplication1;
-
 import javafx.animation.Animation;
 import javafx.animation.Transition;
 import javafx.application.Application;
@@ -36,7 +34,7 @@ import javafx.util.Duration;
  *
  * @author Jeff
  */
-public class JavaFXApplication1 extends Application {
+public class Packvorschrift extends Application {
     
     @Override
     public void start(Stage primaryStage) {
